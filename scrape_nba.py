@@ -14,10 +14,7 @@ from flask import Flask, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
 
 
-# def init_browser():
 
-#     executable_path = {"executable_path": "c:/chromedriver"}
-#     return Browser("chrome", **executable_path, headless=False)
 
 def scrape_all():
 
