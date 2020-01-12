@@ -1,6 +1,3 @@
-from splinter import Browser
-import time
-
 import pandas as pd
 import numpy as np
 import json
@@ -8,16 +5,12 @@ import json
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
-from scipy import stats
 
 from flask import Flask, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
 
 
-# def init_browser():
 
-#     executable_path = {"executable_path": "c:/chromedriver"}
-#     return Browser("chrome", **executable_path, headless=False)
 
 def scrape_all():
 
