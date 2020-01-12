@@ -88,6 +88,8 @@ def scrape_all():
     database_path = "nba_db.sqlite"
     engine = create_engine(f"sqlite:///{database_path}")
 
-    # populate the database
+    # populate the owners summery database
     nba_grouped_df.to_sql(name='owners_summary', con=engine, if_exists='replace', index=True)
 
+    # populate the teams summery database
+    nba_df.to_sql(name='teams_summary', con=engine, if_exists='replace', index=True)

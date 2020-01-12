@@ -1,243 +1,414 @@
-//*******************************************************************************************
-//  CONTROL FOR WHAT IS SELECTED
-//  starts at these values, as user changes selections they will update
-//*******************************************************************************************
 
-// var selectedYear = 2017;
-// var selected_xAxis = "median_income";
-// var selected_yAxis = "median_home_value";
-// var stateView = "all";
-// var selectedState = "Illinois";
-// var selectedCounty = "Cook County_Illinois";
-// var selectedGeo = "0500000US17031";
+// initial call of functions to populate the graphs
+getOwners();
+getTeams();
+getPlayerTeams();
+selectedOwner = 'All'
 
-getDict();
-
-// Builds the bubble chart
-function getDict() {
+// function for building chart 
+function getOwners() {
   d3.json(`/owners`).then((data) => {
-  console.log("in the getDict function");
+    
+    // lists to populate 
+    wins = [];
+    owner = [];
+    pt_differential = [];
+    projected_wins = [];
+    last_ten_wins = [];
+
+
+    data.forEach(d => {
+      
+      // populate the lists
+      wins.push(d["Wins"]);
+      owner.push(d["Owner"]);
+      pt_differential.push(d["Point Differential"]);
+      projected_wins.push(d["Projected Wins"]);
+      last_ten_wins.push(d["Last 10 Gm Wins"]);
+    })   
+
+    var ownerWins = [
+      {
+        x: owner,
+        y: wins,
+        type: 'bar',
+        text: wins.map(String),
+        textposition: 'auto',
+      }
+    ];
+    
+    var ownerWinsLayout = {
+      title: {
+        text: "Wins by Owner",
+        family: 'arial black',
+       },
+      margin:{
+        pad: 10
+      }, 
+      xaxis: {automargin: true, fixedrange: true}, 
+      yaxis: {automargin: true},
+    }
+
+    var ownerProjectedWins = [
+      {
+        x: projected_wins,
+        y: owner,
+        marker:{
+          color: '#a8d2f0'},
+        type: 'bar',
+        text: projected_wins.map(String),
+        textposition: 'auto',
+        orientation: 'h',
+        rangemode:'tozero'   
+      }
+    ];
+    
+    var ownerProjectedWinsLayout = {
+      title: {
+        text: "Projected Wins",
+        family: 'arial black',
+       },
+      margin:{
+        pad: 10
+      }, 
+      xaxis: {automargin: true, fixedrange: true, showticklabels: false}, 
+      yaxis: {automargin: true},
+    }
+
+    var ownerLastTenWins = [
+      {
+        x: last_ten_wins,
+        y: owner,
+        marker:{
+          color: '#a8d2f0'},
+        type: 'bar',
+        text: last_ten_wins.map(String),
+        textposition: 'auto',
+        orientation: 'h',
+        rangemode:'tozero'   
+      }
+    ];
+
+    var ownerLastTenLayout = {
+      title: {
+        text: "Teams Last Ten Games Wins",
+        family: 'arial black',
+       },
+      margin:{
+        pad: 10
+      }, 
+      xaxis: {automargin: true, fixedrange: true, showticklabels: false}, 
+      yaxis: {automargin: true},
+    }
+
+
+    Plotly.newPlot('owner-wins', ownerWins, ownerWinsLayout);
+    Plotly.newPlot('owner-projected-wins', ownerProjectedWins, ownerProjectedWinsLayout);
+    Plotly.newPlot('owner-last-ten-wins', ownerLastTenWins, ownerLastTenLayout);
+
+  console.log("in the getOwner function");
   console.log(data);
   })
 }
-//     // arrays for plotting non selected states
-//     x_axis_list = [];
-//     y_axis_list = [];
-//     county_labels_list = [];
-//     pop_size_list = [];
-//     county_st_list = [];
-//     geo_id_list = [];
-//     bubble_colors = [];
 
-//     // arrays for plotting selected states
-//     x_axis_list_state = [];
-//     y_axis_list_state = [];
-//     county_labels_list_state = [];
-//     pop_size_list_state = [];
-//     county_st_list_state = [];
-//     geo_id_list_state = [];
-//     bubble_colors_state = [];
-
-//     // populate arrays differently, controlling for if the user is looking at all states, highlighting a state, or isolating a state
-//     data.forEach(d => {
-//       if (stateView == "all"){
-//         x_axis_list.push(d[x]);
-//         y_axis_list.push(d[y]);
-//         county_labels_list.push(d["county"] + ", " + d["state"]);
-//         pop_size_list.push(d["population"] * .0003);
-//         county_st_list.push(d["county_state"]);
-//         geo_id_list.push(d['geo_id']);
-        
-//         // pushes highlighted color if selected county_state
-//           if (d["geo_id"] == selectedGeo){
-//             bubble_colors.push("#cb8763")
-//           }
-//           else {
-//             bubble_colors.push("#1f77b4")
-//           }   
-//       }
-
-//       else if ((d["state"] != selectedState) && (stateView == "highlight")){
-//           x_axis_list.push(d[x]);
-//           y_axis_list.push(d[y]);
-//           county_labels_list.push(d["county"] + ", " + d["state"]);
-//           pop_size_list.push(d["population"] * .0003);
-//           county_st_list.push(d["county_state"]);
-//           geo_id_list.push(d['geo_id']);
-
-//           // pushes highlighted color if selected county_state
-//           if (d["geo_id"] == selectedGeo){
-//             bubble_colors.push("#cb8763")
-//           }
-//           else {
-//             bubble_colors.push("#7f7f7f")
-//           }   
-//       }
-
-//       else if (d["state"] == selectedState){
-//         x_axis_list_state.push(d[x]);
-//         y_axis_list_state.push(d[y]);
-//         county_labels_list_state.push(d["county"] + ", " + d["state"]);
-//         pop_size_list_state.push(d["population"] * .0003);
-//         county_st_list_state.push(d["county_state"]);
-//         geo_id_list_state.push(d['geo_id']);
-
-//           // pushes highlighted color if selected county_state
-//           if (d["geo_id"] == selectedGeo){
-//             bubble_colors_state.push("#cb8763")
-//           }
-//           else {
-//             bubble_colors_state.push("#63a3cb")
-//           }   
-//       }
-
-//     });
-
-//     // convert axis titles to friendly name
-//     var x_axis_title = friendlyName(selected_xAxis);
-//     var y_axis_title = friendlyName(selected_yAxis);
-//     var bubble_title = selectedYear + " " + x_axis_title + " vs. " + y_axis_title;
-
-//     // creates varations of display for state all, highlight, and isolate views
-//     if (stateView == "all"){
-//       var name = "All States";
-//     }
-//     else {
-//       var name = "Other States";
-//     }
-
-//     // set axis ranges to constant value if running the loop through year view
-//     if (loopThroughYear === false){
-//       max_x_axis = (Math.max(... x_axis_list)) * 1.10;
-//       max_y_axis = (Math.max(... y_axis_list)) * 1.10;
-//       min_x_axis = (Math.min(... x_axis_list)) * .9;
-//       min_y_axis = (Math.min(... y_axis_list)) * .9;
-//     };
-
-//     // Build a Bubble Chart
-//     var myBubblePlot = document.getElementById('bubble'),
-//     bubbleLayout = {
-//       plot_bgcolor:"white",
-//       hovermode: "closest",
-//       //automargin: true,
-//       height: 450,
-//       // width: 825,
-//       showlegend: true,
-//       legend: {
-//         //bgcolor: "#f2f2f2",
-//         bordercolor: '#999999',
-//         borderwidth: 0.5,
-//         "orientation": "h",
-//         x: 0.05,
-//         y: 0.9, // -0.3//.
-//         // x: 0.0,
-//         // y: 1.3, // -0.3//.
-//         bgcolor: 'rgba(0,0,0,0)'
-//       },
-//       margin: {
-//         l: 60,
-//         r: 10,
-//         b: 50,
-//         t: 50,
-//         pad: 10
-//       },
-//       title: {
-//         y:0.95,
-//         text: bubble_title,
-//         font: {
-//           //family: 'arial black',
-//           size: 16
-//           }
-//         },
-//       xaxis: { 
-//         title: x_axis_title,
-//         zeroline: false,
-//         range: [min_x_axis, max_x_axis],
-//         color:'#2685b5',
-//       },
-//       yaxis: { 
-//         title: y_axis_title,
-//         zeroline: false,
-//         range: [min_y_axis, max_y_axis],
-//         color:'#62ac42',
-//       },
-//     };
+function getTeams() {
+  d3.json(`/teams`).then((data) => {
     
-//     bubbleData = [
-//       {
-//         x: x_axis_list,
-//         y: y_axis_list,
-//         text: county_labels_list,
-//         hovertemplate: '<b>%{text}</b> <br>' + friendlyName(x) + ': %{x} <br>' + friendlyName(y) + ': %{y}',
-//         mode: "markers",
-//         marker: {
-//           size: pop_size_list,
-//           sizemode: 'area',
-//           color: bubble_colors,
-//           },
-//         name: name
-//       },
-//       {
-//         x: x_axis_list_state,
-//         y: y_axis_list_state,
-//         text: county_labels_list_state,
-//         hovertemplate: '<b>%{text}</b> <br>' + friendlyName(x) + ': %{x} <br>' + friendlyName(y) + ': %{y}',
-//         mode: "markers",
-//         marker: {
-//           size: pop_size_list_state,
-//           sizemode: 'area',
-//           color: bubble_colors_state,
-//           },
-//         name: selectedState
-//       }
-//     ];
+    // lists to populate 
+    wins = [];
+    owner = [];
+    teams = [];
+    colors = [];
+    teamAndOwner = [];
 
-//     Plotly.newPlot("bubble", bubbleData, bubbleLayout, {responsive: true}).then  // then handles the year over year view
-//     if (loopThroughYear === true && selectedYear < 2017){
-//       selectedYear = selectedYear + 1;
-//       sleep(300);
-//       buildBubbleChart(selectedYear, selected_xAxis, selected_yAxis);
-//     }
-//     else if (loopThroughYear === true && selectedYear === 2017){
-//       sleep(300);
-//       buildBubbleChart(selectedYear, selected_xAxis, selected_yAxis);
-//       loopThroughYear = false
-//     }
 
-//     myBubblePlot.on('plotly_click', function(data){
-//       clickedCounty = data.points[0].text;
-//       selectedCounty = stateCountyConvert(clickedCounty);
-//       console.log(`${selectedCounty} is the select county`); 
-
-//       // grabs the value of the specific state clicked
-//       clickedState = selectedCounty.split("_")
-//       clickedState = clickedState[1]
-//       console.log(clickedState)
-
-//       if ((clickedState == selectedState) && (stateView != "all")){
-//         selectedGeo = (geo_id_list_state[data.points[0].pointIndex])
-//         }
-//       else if ((clickedState != selectedState) && (stateView != "all")){
-//         selectedGeo = (geo_id_list[data.points[0].pointIndex])
-//         }
-//       else if (stateView == "all"){
-//         selectedGeo = (geo_id_list[data.points[0].pointIndex])
-//         }
-
-//       console.log(`${selectedGeo} is the select geoID`); 
+    data.forEach(d => {
       
-//       // update the county card and time series by calling functions with the new geo
-//       newCountyTimeSeries(selectedGeo);  //updates time series
-//       county_select(selectedGeo);  // updates card
-//       mapHighlight(mapLayersDict[selectedGeo]);  // updates map
-//       buildBubbleChart(selectedYear, selected_xAxis, selected_yAxis);  // reruns bubble chart
-//   });
-// });
+      // populate the lists
+      wins.push(d["Wins"]);
+      owner.push(d["Owner"]);
+      teams.push(d["Team"]);
 
-//   selectedYear = year
-//   selected_xAxis = x
-//   selected_yAxis = y
-//   console.log(`current selected year is ${selectedYear}`)
-//   console.log(`current selected x is ${x}`)
-//   console.log(`current selected y is ${y}`)
-// }
+      // pushes highlighted color if selected county_state
+      if (selectedOwner == 'All'){
+        colors.push("#1f77b4")
+      }
+      else if (d["Owner"] == selectedOwner){
+        colors.push("#1f77b4")
+      }   
+      else {
+        colors.push("#cccccc")
+      }   
+    })   
+
+    var teamWins = [
+      {
+        x: wins,
+        y: teams,
+        text: teamAndOwner,
+        marker:{
+          color: colors},
+        type: 'bar',
+        text: wins.map(String),
+        textposition: 'auto',
+        orientation: 'h',
+        rangemode:'tozero'   
+      }
+    ];
+
+    var teamWinsLayout = {
+      title: {
+        text: "Teams Wins",
+        family: 'arial black',
+       },
+      height: 700,
+      margin:{
+        pad: 10
+      }, 
+      xaxis: {automargin: true, fixedrange: true, showticklabels: false}, 
+      yaxis: {automargin: true},
+    }
+
+    Plotly.newPlot('team-wins',teamWins, teamWinsLayout);
+
+  console.log("in the getTeam function");
+  console.log(data);
+  })
+}
+
+
+function getPlayerTeams() {
+  d3.json(`/teams`).then((data) => {
+    
+    // lists to populate 
+    adam_wins = [];
+    adam_team = [];
+    adam_last10 = [];
+    joey_wins = [];
+    joey_team = [];
+    joey_last10 = [];
+    johnny_wins = [];
+    johnny_team = [];
+    johnny_last10 = [];
+    robert_wins = [];
+    robert_team = [];
+    robert_last10 = [];
+    
+
+
+    data.forEach(d => {
+
+
+      // populate the team lists
+      if (d["Owner"] == 'Adam'){
+        adam_wins.push(d["Wins"]);
+        adam_last10.push(d["Last 10 Gm Wins"]);
+        adam_team.push(d["Team"]);
+      }
+      else if (d["Owner"] == 'Joey'){
+        joey_wins.push(d["Wins"]);
+        joey_last10.push(d["Last 10 Gm Wins"]);
+        joey_team.push(d["Team"]);
+      }
+      else if (d["Owner"] == 'Johnny'){
+        johnny_wins.push(d["Wins"]);
+        johnny_last10.push(d["Last 10 Gm Wins"]);
+        johnny_team.push(d["Team"]);
+      }
+      else if (d["Owner"] == 'Robert'){
+        robert_wins.push(d["Wins"]);
+        robert_last10.push(d["Last 10 Gm Wins"]);
+        robert_team.push(d["Team"]);
+      }
+    })   
+
+    var adamWinsData = [
+      {
+        x: adam_wins,
+        y: adam_team,
+        type: 'bar',
+        text: adam_wins.map(String),
+        textposition: 'auto',
+        orientation: 'h',
+        rangemode:'tozero'   
+      }
+    ];
+
+    var adamWinsLayout = {
+      title: {
+        text: "Adam Teams Wins",
+        family: 'arial black'},
+        xaxis: {automargin: true, fixedrange: true, showticklabels: false}, 
+      yaxis: {automargin: true},
+    }
+
+    var adamLastTenWinsData = [
+      {
+        x: adam_last10,
+        y: adam_team,
+        marker:{
+          color: '#a8d2f0'},
+        type: 'bar',
+        text: adam_last10.map(String),
+        textposition: 'auto',
+        orientation: 'h',
+        rangemode:'tozero'   
+      }
+    ];
+
+    var adamLastTenWinsLayout = {
+      title: {
+        text: "Adam Teams - Wins Last 10 Games",
+        family: 'arial black'},
+        xaxis: {automargin: true, fixedrange: true, showticklabels: false}, 
+      yaxis: {automargin: true},
+    }
+
+    var joeyWinsData = [
+      {
+        x: joey_wins,
+        y: joey_team,
+        type: 'bar',
+        text: joey_wins.map(String),
+        textposition: 'auto',
+        orientation: 'h',
+        rangemode:'tozero'   
+      }
+    ];
+
+    var joeyWinsLayout = {
+      title: {
+        text: "Joey Teams Wins",
+        family: 'arial black'},
+        xaxis: {automargin: true, fixedrange: true, showticklabels: false}, 
+      yaxis: {automargin: true},
+    }
+
+    var joeyLastTenWinsData = [
+      {
+        x: joey_last10,
+        y: joey_team,
+        marker:{
+          color: '#a8d2f0'},
+        type: 'bar',
+        text: joey_last10.map(String),
+        textposition: 'auto',
+        orientation: 'h',
+        rangemode:'tozero'   
+      }
+    ];
+
+    var joeyLastTenWinsLayout = {
+      title: {
+        text: "Joey Teams - Wins Last 10 Games",
+        family: 'arial black'},
+        xaxis: {automargin: true, fixedrange: true, showticklabels: false}, 
+      yaxis: {automargin: true},
+    }
+
+    var johnnyWinsData = [
+      {
+        x: johnny_wins,
+        y: johnny_team,
+        type: 'bar',
+        text: johnny_wins.map(String),
+        textposition: 'auto',
+        orientation: 'h',
+        rangemode:'tozero'   
+      }
+    ];
+
+    var johnnyWinsLayout = {
+      title: {
+        text: "Johnny Teams Wins",
+        family: 'arial black'},
+        xaxis: {automargin: true, fixedrange: true, showticklabels: false}, 
+      yaxis: {automargin: true},
+    }
+
+    var johnnyLastTenWinsData = [
+      {
+        x: johnny_last10,
+        y: johnny_team,
+        marker:{
+          color: '#a8d2f0'},
+        type: 'bar',
+        text: johnny_last10.map(String),
+        textposition: 'auto',
+        orientation: 'h',
+        rangemode:'tozero'   
+      }
+    ];
+
+    var johnnyLastTenWinsLayout = {
+      title: {
+        text: "Johnny Teams - Wins Last 10 Games",
+        family: 'arial black'},
+        xaxis: {automargin: true, fixedrange: true, showticklabels: false}, 
+      yaxis: {automargin: true},
+    }
+
+    var robertWinsData = [
+      {
+        x: robert_wins,
+        y: robert_team,
+        type: 'bar',
+        text: robert_wins.map(String),
+        textposition: 'auto',
+        orientation: 'h',
+        rangemode:'tozero'   
+      }
+    ];
+
+    var robertWinsLayout = {
+      title: {
+        text: "Robert Teams Wins",
+        family: 'arial black'},
+        xaxis: {automargin: true, fixedrange: true, showticklabels: false}, 
+      yaxis: {automargin: true},
+    }
+
+    var robertLastTenWinsData = [
+      {
+        x: robert_last10,
+        y: robert_team,
+        marker:{
+          color: '#a8d2f0'},
+        type: 'bar',
+        text: robert_last10.map(String),
+        textposition: 'auto',
+        orientation: 'h',
+        rangemode:'tozero'   
+      }
+    ];
+
+    var robertLastTenWinsLayout = {
+      title: {
+        text: "Robert Teams - Wins Last 10 Games",
+        family: 'arial black'},
+        xaxis: {automargin: true, fixedrange: true, showticklabels: false}, 
+      yaxis: {automargin: true},
+    }
+
+    Plotly.newPlot('adam-team-wins',adamWinsData, adamWinsLayout);
+    Plotly.newPlot('adam-last-ten-wins',adamLastTenWinsData, adamLastTenWinsLayout);
+    Plotly.newPlot('joey-team-wins',joeyWinsData, joeyWinsLayout);
+    Plotly.newPlot('joey-last-ten-wins',joeyLastTenWinsData, joeyLastTenWinsLayout);
+    Plotly.newPlot('johnny-team-wins',johnnyWinsData, johnnyWinsLayout);
+    Plotly.newPlot('johnny-last-ten-wins',johnnyLastTenWinsData, johnnyLastTenWinsLayout);
+    Plotly.newPlot('robert-team-wins',robertWinsData, robertWinsLayout);
+    Plotly.newPlot('robert-last-ten-wins',robertLastTenWinsData, robertLastTenWinsLayout);
+
+  console.log("in the getTeam function");
+  console.log(data);
+  })
+}
+
+
+// changes the select owner based on what the user selects and reruns the teams chart
+function newSelectedOwner(){
+  selectedOwner = d3.select("#owner-select").property("value");
+  console.log(`The new selected owner is ${selectedOwner}`);
+  getTeams();
+}
+

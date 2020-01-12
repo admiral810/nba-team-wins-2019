@@ -15,15 +15,96 @@
   <div class="container-fluid">
     <div class="jumbotron text-center" >
       <h1><strong>NBA Team Wins Tracker</strong></h1>
-      <p><a class="btn btn-primary btn-lg" href="/scrape" role="button">Get Data!</a></p>
+      <p><a class="btn btn-primary btn-lg" href="/scrape" role="button">Click to Update Data!</a></p>
     </div>
     <div class="container-fluid">
   </div>
 </div>
 
-</body>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.5.0/d3.js"></script>
-  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-  <script src="{{ url_for('static', filename='js/exhibits.js') }}"></script>
+<div class="container-fluid">
+<div class="row-fluid justify-content-center">
+  <div class="col-md-6">
+    <div id="owner-wins"></div>
+  </div>
 
-</html>
+  <div class="col-md-3">
+    <div id="owner-projected-wins"></div>
+  </div>
+  <div class="col-md-3">
+    <div id="owner-last-ten-wins"></div>
+  </div>
+</div>
+</div>
+
+<div class="container-fluid">
+  <div class="row-fluid justify-content-center">
+    <div class="col-md-12">
+      <hr>
+    </div>
+  </div>
+  <div class="row-fluid justify-content-center">
+    <div class="col-md-3">
+      <div class="panel panel-default">
+      <div class="panel-heading"><strong>View Owner's Teams</strong>
+      </div>
+          <div class="panel-body">
+            <select id="owner-select" onchange="newSelectedOwner(this.value);">
+              <option value="All" selected>All</option>
+              <option value="Adam">Adam</option>
+              <option value="Joey">Joey</option>
+              <option value="Johnny">Johnny</option>
+              <option value="Robert">Robert</option>
+            </select> 
+          </div>
+    </div>
+    </div>
+  </div>
+    <div class="col-md-9">
+      <div id="team-wins"></div>
+    </div>
+</div>
+
+<div class="container-fluid">
+  <div class="row-fluid justify-content-center">
+    <div class="col-md-12">
+      <hr>
+    </div>
+  </div>
+  <div class="row-fluid justify-content-center">
+    <div class="col-md-3">
+      <div id="adam-team-wins"></div>
+    </div>
+    <div class="col-md-3">
+      <div id="adam-last-ten-wins"></div>
+    </div>
+    <div class="col-md-3">
+      <div id="joey-team-wins"></div>
+    </div>
+    <div class="col-md-3">
+      <div id="joey-last-ten-wins"></div>
+    </div>
+  </div>
+  <div class="row-fluid justify-content-center">
+    <div class="col-md-3">
+      <div id="johnny-team-wins"></div>
+    </div>
+    <div class="col-md-3">
+      <div id="johnny-last-ten-wins"></div>
+    </div>
+    <div class="col-md-3">
+      <div id="robert-team-wins"></div>
+    </div>
+    <div class="col-md-3">
+      <div id="robert-last-ten-wins"></div>
+    </div>
+  </div>
+</div>
+
+  </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.5.0/d3.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="{{ url_for('static', filename='js/exhibits.js') }}"></script>
+
+  </html>
+
+

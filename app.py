@@ -27,10 +27,6 @@ Base = automap_base()
 # reflect the tables
 Base.prepare(db.engine, reflect=True)
 
-# Save references to each table
-owners_summary = Base.classes.owners_summary
-
-
 
 @app.route("/")
 def index():
@@ -38,8 +34,16 @@ def index():
     return render_template("index.html")
 
 @app.route("/owners")
-def getDict():
-    results = pd.read_sql(f"SELECT * FROM owners_summary", db.session.bind)
+def getOwners():
+    results = pd.read_sql(f"SELECT * FROM owners_summary ORDER BY Wins DESC", db.session.bind)
+    # Return a list of the column names (sample names)
+    results = results.to_json(orient='records')
+    jsonresults = json.loads(results)
+    return jsonify(jsonresults)
+
+@app.route("/teams")
+def getTeams():
+    results = pd.read_sql(f"SELECT * FROM teams_summary ORDER BY Wins ASC", db.session.bind)
     # Return a list of the column names (sample names)
     results = results.to_json(orient='records')
     jsonresults = json.loads(results)
